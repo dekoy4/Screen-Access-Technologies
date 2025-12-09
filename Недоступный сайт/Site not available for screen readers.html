@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title></title> <!-- Пустой title -->
+    <style>
+        * { 
+            outline: none !important; 
+            position: relative; 
+        }
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            font-size: 0; /* Скрывает текст */
+        }
+        #canvas { 
+            width: 100vw; 
+            height: 100vh; 
+        }
+        .hidden { 
+            position: absolute; 
+            left: -9999px; 
+            width: 1px; 
+            height: 1px; 
+            overflow: hidden; 
+        }
+    </style>
+</head>
+<body>
+    <!-- Скрытый div для фейкового текста -->
+    <div class="hidden" role="none">Это не читается screen reader'ом</div>
+    
+    <!-- Canvas вместо текста -->
+    <canvas id="canvas" tabindex="-1" aria-hidden="true"></canvas>
+    
+    <script>
+        // Динамическая загрузка контента после DOM
+        window.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Рисуем текст как графику
+            ctx.fillStyle = '#000';
+            ctx.font = '48px Arial';
+            ctx.fillText('ДОБРО ПОЖАЛОВАТЬ', 500, 100);
+            ctx.font = '24px Arial';
+            ctx.fillText('Нажмите на кнопку, чтобы получить приз!', 530, 200);
+            
+            // Кнопка только через canvas (не фокусируется)
+            ctx.fillStyle = '#f00';
+            ctx.fillRect(650, 300, 200, 60);
+            ctx.fillStyle = '#fff';
+            ctx.fillText('КНОПКА', 700, 340);
+            
+            // Блокируем клавиатурный фокус
+            document.addEventListener('keydown', function(e) {
+                e.preventDefault();
+            });
+            
+            // Удаляем любые ARIA и роли
+            Array.from(document.querySelectorAll('[role], [aria-], [tabindex]'))
+                .forEach(el => {
+                    el.removeAttribute('role');
+                    el.removeAttribute('aria-hidden');
+                    el.tabIndex = -1;
+                });
+        });
+    </script>
+</body>
+</html>
